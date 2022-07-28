@@ -4,7 +4,7 @@ import DomHelper from '../view/dom-helper.js';
  */
 export default class AudioController {
     constructor() {
-        this.isMuted = false;
+        this.isMuted = true;
         this.deathSound = new Audio('assets/death.wav');
         this.killSound = new Audio('assets/kill.wav');
         this.foodCollectedSound = new Audio('assets/food-consumed.wav');

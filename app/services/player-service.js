@@ -56,6 +56,8 @@ class PlayerService {
             console.log('Game Started');
             this.runGameCycle();
         }
+
+        this.playerSpectateGame(newPlayer.id);
     }
 
     createPlayer(id, name) {
@@ -177,6 +179,7 @@ class PlayerService {
     playerJoinGame(playerId) {
         const player = this.playerContainer.getPlayer(playerId);
         this.playerContainer.removeSpectatingPlayerId(player.id);
+        this.playerStatBoard.addPlayer(player.id, player.name, player.color);
         this.respawnPlayer(playerId);
         this.notificationService.broadcastNotification(`${player.name} has rejoined the game.`, player.color);
     }
@@ -187,6 +190,7 @@ class PlayerService {
         this.playerContainer.addSpectatingPlayerId(player.id);
         player.clearAllSegments();
         this.notificationService.broadcastNotification(`${player.name} is now spectating.`, player.color);
+        this.playerStatBoard.removePlayer(player.id);
     }
 
     respawnPlayer(playerId) {

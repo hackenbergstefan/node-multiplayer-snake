@@ -67,7 +67,7 @@ class NameService {
     }
 
     _generatePlayerName() {
-        return `Player ${this._getRandomNumber()}${this._getRandomNumber()}${this._getRandomNumber()}`;
+        return `Player ${this.usedPlayerNames.size}`;
     }
 
     _getRandomNumber() {

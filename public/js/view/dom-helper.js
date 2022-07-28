@@ -193,6 +193,8 @@ export default class DomHelper {
             } else if (document.documentElement.webkitRequestFullScreen) {
                 document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
             }
+            document.getElementById('playerSettings').style.display = 'none';
+            document.getElementById('adminControls').style.display = 'none';
         } else {
             if (document.cancelFullScreen) {
                 document.cancelFullScreen();
@@ -201,6 +203,8 @@ export default class DomHelper {
             } else if (document.webkitCancelFullScreen) {
                 document.webkitCancelFullScreen();
             }
+            document.getElementById('playerSettings').style.display = 'block';
+            document.getElementById('adminControls').style.display = 'block';
         }
     }
 }

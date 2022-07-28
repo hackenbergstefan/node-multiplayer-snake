@@ -48,7 +48,7 @@
     display: inline-block;
 }
 .nav-label {
-    display: inline-block;
+    display: none;
     padding-top: 15px;
 }
 .player-stats-header {
@@ -104,9 +104,9 @@
     width: 60px;
     vertical-align: top;
     cursor: pointer;
+    opacity: 0;
     &:hover {
-        background: url(../assets/fullscreen-icon-hover.png) no-repeat;
-        background-color: @button-background-hover-color;
+        opacity: 1;
     }
 }
 #game-board {
@@ -138,6 +138,10 @@
 #play-or-watch-button {
     display: inline-block;
     width: 150px;
+    opacity: 0;
+    &:hover {
+        opacity: 1;
+    }
 }
 #player-stats {
     &:extend(#notifications);

@@ -36,7 +36,7 @@ const ServerConfig = {
             COLOR: 'blue',
             POINTS: 1,
             GROWTH: 1,
-            SPAWN_RATE: 0.05,
+            SPAWN_RATE: 0.0,
         },
     },
     IO: {
