@@ -2,9 +2,10 @@
 
 class PlayerStats {
 
-    constructor(name, color) {
+    constructor(name, color, speed) {
         this.name = name;
         this.color = color;
+        this.speed = speed;
         this.score = 0;
         this.highScore = 0;
         this.deaths = 0;
@@ -17,6 +18,10 @@ class PlayerStats {
 
     changeName(newName) {
         this.name = newName;
+    }
+
+    changeSpeed(newSpeed) {
+        this.speed = newSpeed;
     }
 
     addDeath() {
@@ -50,6 +55,7 @@ class PlayerStats {
         return {
             name: this.name,
             color: this.color,
+            speed: this.speed,
             score: this.score,
             highScore: this.highScore,
             deaths: this.deaths,

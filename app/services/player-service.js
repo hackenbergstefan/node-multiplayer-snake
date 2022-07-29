@@ -162,6 +162,7 @@ class PlayerService {
             if (this.playerContainer.isSpectating(player.id)) {
                 continue;
             }
+            this.playerStatBoard.changePlayerSpeed(player.id, player.speed);
             this.boardOccupancyService.removePlayerOccupancy(player.id, player.getSegments());
             CoordinateService.movePlayer(player);
             if (this.boardOccupancyService.isOutOfBounds(player.getHeadCoordinate()) ||

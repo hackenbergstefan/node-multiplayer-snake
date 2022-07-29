@@ -19,12 +19,16 @@ class PlayerStatBoard {
         this.statBoard.get(playerId).addKill();
     }
 
-    addPlayer(playerId, playerName, playerColor) {
-        this.statBoard.set(playerId, new PlayerStats(playerName, playerColor));
+    addPlayer(playerId, playerName, playerColor, playerSpeed) {
+        this.statBoard.set(playerId, new PlayerStats(playerName, playerColor, playerSpeed));
     }
 
     changePlayerColor(playerId, newColor) {
         this.statBoard.get(playerId).changeColor(newColor);
+    }
+
+    changePlayerSpeed(playerId, newSpeed) {
+        this.statBoard.get(playerId).changeSpeed(newSpeed);
     }
 
     changePlayerName(playerId, newName) {

@@ -2,8 +2,8 @@
 
 const ServerConfig = {
     MIN_FPS: 8,
-    STARTING_FPS: 8,
-    MAX_FPS: 60,
+    STARTING_FPS: 60,
+    MAX_FPS: 120,
     PLAYER_STARTING_LENGTH: 10,
     SPAWN_TURN_LEEWAY: 10,
     DEFAULT_STARTING_BOTS: 0,

@@ -89,6 +89,7 @@ export default class GameView {
     showPlayerStats(playerStats) {
         let formattedScores = '<div class="player-stats-header"><span class="image"></span>' +
             '<span class="name">Name</span>' +
+            '<span class="stat">Speed</span>' +
             '<span class="stat">Score</span>' +
             '<span class="stat">High</span>' +
             '<span class="stat">Kills</span>' +
@@ -100,6 +101,7 @@ export default class GameView {
             }
             formattedScores += `<div class='player-stats-content'><span class='image'>${playerImageElement}</span>` +
                 `<span class='name' style='color: ${playerStat.color}'>${playerStat.name}</span>` +
+                `<span class='stat'>${playerStat.speed}</span>` +
                 `<span class='stat'>${playerStat.score}</span>` +
                 `<span class='stat'>${playerStat.highScore}</span>` +
                 `<span class='stat'>${playerStat.kills}</span>` +

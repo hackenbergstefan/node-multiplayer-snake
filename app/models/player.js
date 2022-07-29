@@ -7,6 +7,7 @@ class Player {
         this.color = color;
         this.growAmount = 0;
         this.moveCounter = 0;
+        this.speed = 30;
     }
 
     changeDirection(newDirection) {
@@ -35,6 +36,10 @@ class Player {
     }
 
     move(newHeadCoordinate) {
+        this.moveCounter++;
+        if (this.moveCounter % this.speed != 0) {
+            return;
+        }
         // Record the last drawn player direction, to limit the player from moving too quickly back into themselves
         this.directionBeforeMove = this.direction;
         if (this.growAmount > 0) {
@@ -44,7 +49,6 @@ class Player {
             this._segments.pop();
         }
         this._segments.unshift(newHeadCoordinate);
-        this.moveCounter++;
     }
 
     setStartingSpawn(newDirection, headCoordinate, growAmount) {
@@ -72,6 +76,7 @@ class Player {
             id: this.id,
             name: this.name,
             direction: this.direction,
+            speed: this.speed,
             segments: this.getSegments(),
             growAmount: this.growAmount,
             color: this.color,

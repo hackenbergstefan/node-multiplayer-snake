@@ -11,6 +11,9 @@ const KEYCODE_TO_DIRECTION = {
     37: Direction.LEFT,
     40: Direction.DOWN,
     39: Direction.RIGHT,
+    // Other keys
+    187: "PLUS",
+    189: "MINUS",
 };
 
 /**
@@ -39,11 +42,21 @@ class GameControlsService {
         if (!newDirection) {
             return;
         }
-        const validNextDirections = this.getValidNextMove(player.directionBeforeMove);
-        for (const validNextDirection of validNextDirections) {
-            if (newDirection === validNextDirection) {
-                player.changeDirection(newDirection);
-                break;
+        if (newDirection == "PLUS") {
+            if (player.speed > 0) {
+                player.speed--;
+            }
+        }
+        else if (newDirection == "MINUS") {
+            player.speed++;
+        }
+        else {
+            const validNextDirections = this.getValidNextMove(player.directionBeforeMove);
+            for (const validNextDirection of validNextDirections) {
+                if (newDirection === validNextDirection) {
+                    player.changeDirection(newDirection);
+                    break;
+                }
             }
         }
     }

@@ -120,6 +120,10 @@ class AdminService {
         }
         const newBotId = this.nameService.getBotId();
         const newBot = this.playerService.createPlayer(newBotId, newBotId);
+        function getRandomIntegerInRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        newBot.speed = getRandomIntegerInRange(1, 30);
         this.notificationService.broadcastNotification(`${newBot.name} has joined!`, newBot.color);
         this.botIds.push(newBot.id);
     }
