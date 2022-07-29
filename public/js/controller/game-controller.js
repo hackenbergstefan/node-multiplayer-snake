@@ -28,6 +28,7 @@ export default class GameController {
         this.food = {};
         this.textsToDraw = [];
         this.walls = [];
+        this.lastCapsenseUpdate = Date.now();
     }
 
     connect(io) {
@@ -127,10 +128,70 @@ export default class GameController {
     }
 
     joinGameCallback() {
+        navigator.bluetooth.requestDevice({ filters: [{ name: ['CapSense Button Slider'] }], optionalServices: ['0003cab5-0000-1000-8000-00805f9b0131'] })
+            .then(device => device.gatt.connect())
+            .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
+            .then(service => service.getCharacteristic('0003caa3-0000-1000-8000-00805f9b0131'))
+            // .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
+            // .then(service => service.getCharacteristic('0003caa2-0000-1000-8000-00805f9b0131'))
+            .then(characteristic => {
+                characteristic.addEventListener("characteristicvaluechanged", this.capsenseNotificationCallback.bind(this));
+                characteristic.startNotifications();
+            })
+
+            .then(value => {
+                console.log(value);
+            })
+            .catch(error => { console.error(error); });
         this.socket.emit(ClientConfig.IO.OUTGOING.JOIN_GAME);
     }
 
     keyDownCallback(keyCode) {
+        this.socket.emit(ClientConfig.IO.OUTGOING.KEY_DOWN, keyCode);
+    }
+
+    capsenseNotificationCallback(event) {
+        if (Date.now() - this.lastCapsenseUpdate < 50) {
+            return;
+        }
+        this.lastCapsenseUpdate = Date.now();
+        let value = event.target.value.getUint8(1);
+        let keyCode;
+        let direction = this.players[0].direction;
+        if (direction.x == 1) {// snake runs right
+            if (value > 1) {
+                keyCode = 38; // UP
+            }
+            else {
+                keyCode = 40; // DOWN
+            }
+        }
+        else if (direction.x == -1) {// snake runs left
+            if (value > 1) {
+                keyCode = 40; // DOWN
+            }
+            else {
+                keyCode = 38; // UP
+            }
+        }
+        else if (direction.y == 1) { // snake runs down
+            if (value > 1) {
+                keyCode = 39; // RIGHT
+            }
+            else {
+                keyCode = 37; // LEFT
+            }
+        }
+        else if (direction.y == -1) { // snake runs up
+            if (value > 1) {
+                keyCode = 37; // LEFT
+            }
+            else {
+                keyCode = 39; // RIGHT
+            }
+        }
+        console.log(event);
+        console.log(`${direction.x}, ${direction.y} + ${event.target.value.getUint8(0)} ${event.target.value.getUint8(1)} ${event.target.value.getUint8(2)} => ${keyCode}`);
         this.socket.emit(ClientConfig.IO.OUTGOING.KEY_DOWN, keyCode);
     }
 
