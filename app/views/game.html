@@ -14,6 +14,7 @@
                     <a href="#top" id="play-or-watch-button" title="Spectate or rejoin game">Play</a>
                     <!-- <a href="#playerSettings" title="Go to settings">Settings</a> -->
                     <button id="full-screen-button" title="Go into full-screen mode"/>
+                    <button id="connect-button" title="Connect Devices" onclick="pairDevices();">Connect Devices</button>
                 </div>
             </div>
             <div id="kill-messages">
@@ -89,5 +90,13 @@
         <!-- socket.io client is exposed by the server.  This sets a global variable io -->
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/main.js" type="module"></script>
+        <script>
+            function pairDevices() {
+                navigator.bluetooth.requestDevice({
+                    filters: [{ name: ['CapSense Button Slider'] }],
+                    optionalServices: ['0003cab5-0000-1000-8000-00805f9b0131']
+                });
+            }
+        </script>
     </body>
 </html>
