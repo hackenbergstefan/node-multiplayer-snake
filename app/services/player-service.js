@@ -144,6 +144,9 @@ class PlayerService {
                 const victimSummaries = [];
                 for (const victimId of killReport.getVictimIds()) {
                     const victim = this.playerContainer.getPlayer(victimId);
+                    if (!victim.hasSegments()) {
+                        continue;
+                    }
                     this.boardOccupancyService.removePlayerOccupancy(victim.id, victim.getSegments());
                     victim.clearAllSegments();
                     this.playerContainer.addPlayerIdToRespawn(victim.id);
