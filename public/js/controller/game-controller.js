@@ -10,19 +10,19 @@ import GameView from '../view/game-view.js';
 export default class GameController {
     constructor() {
         this.gameView = new GameView(this.backgroundImageUploadCallback.bind(this),
-                                     this.botChangeCallback.bind(this),
-                                     this.foodChangeCallback.bind(this),
-                                     this.imageUploadCallback.bind(this),
-                                     this.joinGameCallback.bind(this),
-                                     this.keyDownCallback.bind(this),
-                                     this.muteAudioCallback.bind(this),
-                                     this.playerColorChangeCallback.bind(this),
-                                     this.playerNameUpdatedCallback.bind(this),
-                                     this.spectateGameCallback.bind(this),
-                                     this.speedChangeCallback.bind(this),
-                                     this.startLengthChangeCallback.bind(this),
-                                     this.toggleGridLinesCallback.bind(this)
-                                     );
+            this.botChangeCallback.bind(this),
+            this.foodChangeCallback.bind(this),
+            this.imageUploadCallback.bind(this),
+            this.joinGameCallback.bind(this),
+            this.keyDownCallback.bind(this),
+            this.muteAudioCallback.bind(this),
+            this.playerColorChangeCallback.bind(this),
+            this.playerNameUpdatedCallback.bind(this),
+            this.spectateGameCallback.bind(this),
+            this.speedChangeCallback.bind(this),
+            this.startLengthChangeCallback.bind(this),
+            this.toggleGridLinesCallback.bind(this)
+        );
         this.audioController = new AudioController();
         this.players = [];
         this.food = {};
@@ -55,8 +55,8 @@ export default class GameController {
             }
             // Flash around where you have just spawned
             if (`/#${this.socket.id}` === player.id &&
-                    player.moveCounter <= ClientConfig.TURNS_TO_FLASH_AFTER_SPAWN &&
-                    player.moveCounter % 2 === 0) {
+                player.moveCounter <= ClientConfig.TURNS_TO_FLASH_AFTER_SPAWN &&
+                player.moveCounter % 2 === 0) {
                 this.canvasView.drawSquareAround(player.segments[0], ClientConfig.SPAWN_FLASH_COLOR);
             }
 
@@ -127,70 +127,10 @@ export default class GameController {
     }
 
     joinGameCallback() {
-        navigator.bluetooth.requestDevice({ filters: [{ name: ['CapSense Button Slider'] }], optionalServices: ['0003cab5-0000-1000-8000-00805f9b0131'] })
-            .then(device => device.gatt.connect())
-            .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
-            .then(service => service.getCharacteristic('0003caa3-0000-1000-8000-00805f9b0131'))
-            // .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
-            // .then(service => service.getCharacteristic('0003caa2-0000-1000-8000-00805f9b0131'))
-            .then(characteristic => {
-                characteristic.addEventListener("characteristicvaluechanged", this.capsenseNotificationCallback.bind(this));
-                characteristic.startNotifications();
-            })
-
-            .then(value => {
-                console.log(value);
-            })
-            .catch(error => { console.error(error); });
         this.socket.emit(ClientConfig.IO.OUTGOING.JOIN_GAME);
     }
 
     keyDownCallback(keyCode) {
-        this.socket.emit(ClientConfig.IO.OUTGOING.KEY_DOWN, keyCode);
-    }
-
-    capsenseNotificationCallback(event) {
-        if (Date.now() - this.lastCapsenseUpdate < 50) {
-            return;
-        }
-        this.lastCapsenseUpdate = Date.now();
-        let value = event.target.value.getUint8(1);
-        let keyCode;
-        let direction = this.players[0].direction;
-        if (direction.x == 1) {// snake runs right
-            if (value > 1) {
-                keyCode = 38; // UP
-            }
-            else {
-                keyCode = 40; // DOWN
-            }
-        }
-        else if (direction.x == -1) {// snake runs left
-            if (value > 1) {
-                keyCode = 40; // DOWN
-            }
-            else {
-                keyCode = 38; // UP
-            }
-        }
-        else if (direction.y == 1) { // snake runs down
-            if (value > 1) {
-                keyCode = 39; // RIGHT
-            }
-            else {
-                keyCode = 37; // LEFT
-            }
-        }
-        else if (direction.y == -1) { // snake runs up
-            if (value > 1) {
-                keyCode = 37; // LEFT
-            }
-            else {
-                keyCode = 39; // RIGHT
-            }
-        }
-        console.log(event);
-        console.log(`${direction.x}, ${direction.y} + ${event.target.value.getUint8(0)} ${event.target.value.getUint8(1)} ${event.target.value.getUint8(2)} => ${keyCode}`);
         this.socket.emit(ClientConfig.IO.OUTGOING.KEY_DOWN, keyCode);
     }
 
@@ -296,61 +236,71 @@ export class BlePlayer {
         this.reconnect();
     }
 
-    reconnect() {
-        this.device.gatt.connect()
-            .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
-            .then(service => service.getCharacteristic('0003caa3-0000-1000-8000-00805f9b0131'))
-            .then(characteristic => {
-                characteristic.addEventListener("characteristicvaluechanged", this.capsenseNotificationCallback.bind(this));
-                characteristic.startNotifications();
-                this.socket.emit(ClientConfig.IO.OUTGOING.JOIN_GAME);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    async reconnect() {
+        try {
+            const server = await this.device.gatt.connect();
+            const service = await server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131');
+            const characteristic = await service.getCharacteristic('0003caa3-0000-1000-8000-00805f9b0131');
+            await characteristic.addEventListener("characteristicvaluechanged", this.bleNotification.bind(this));
+            await characteristic.startNotifications();
+
+            // const characteristic2 = await service.getCharacteristic('0003caa2-0000-1000-8000-00805f9b0131');
+            // await characteristic2.addEventListener("characteristicvaluechanged", this.capsenseSpeedNotification.bind(this));
+            // await characteristic2.startNotifications();
+
+            await this.socket.emit(ClientConfig.IO.OUTGOING.JOIN_GAME);
+            // this.device.gatt.connect()
+            //     .then(server => server.getPrimaryService('0003cab5-0000-1000-8000-00805f9b0131'))
+            //     .then(service => service.getCharacteristic('0003caa2-0000-1000-8000-00805f9b0131'))
+            //     .then(characteristic => {
+            //         characteristic.addEventListener("characteristicvaluechanged", this.capsenseSpeedNotification.bind(this));
+            //         characteristic.startNotifications();
+            //     })
+            //     .catch(error => {
+            //         console.error(error);
+            //     });
+        } catch (e) {
+            // Ignore errors by purpose
+        }
     }
 
-    capsenseNotificationCallback(event) {
+    bleNotification(event) {
         if (Date.now() - this.lastCapsenseUpdate < 50) {
             return;
         }
         this.lastCapsenseUpdate = Date.now();
-        let value = event.target.value.getUint8(1);
-        let keyCode;
-        let direction = this.gameController.players.find(player => player.id == this.socket.id).direction;
-        if (direction.x == 1) {// snake runs right
-            if (value > 1) {
-                keyCode = 38; // UP
-            }
-            else {
-                keyCode = 40; // DOWN
-            }
-        }
-        else if (direction.x == -1) {// snake runs left
-            if (value > 1) {
+        // console.log(`BLE: ${event.target.value.getUint8(0)} ${event.target.value.getUint8(1)} ${event.target.value.getUint8(2)}`);
+
+        let slider = event.target.value.getUint8(0);
+        let axis_0 = event.target.value.getUint8(1);
+        let axis_1 = event.target.value.getUint8(2);
+        let keyCode = null;
+        if (axis_0 != 0) {
+            if (axis_0 == 1) {
                 keyCode = 40; // DOWN
             }
             else {
                 keyCode = 38; // UP
             }
         }
-        else if (direction.y == 1) { // snake runs down
-            if (value > 1) {
-                keyCode = 39; // RIGHT
-            }
-            else {
-                keyCode = 37; // LEFT
-            }
-        }
-        else if (direction.y == -1) { // snake runs up
-            if (value > 1) {
+        else if (axis_1 != 0) {
+            if (axis_1 == 1) {
                 keyCode = 37; // LEFT
             }
             else {
                 keyCode = 39; // RIGHT
             }
         }
-        console.log(`${direction.x}, ${direction.y} + ${event.target.value.getUint8(0)} ${event.target.value.getUint8(1)} ${event.target.value.getUint8(2)} => ${keyCode}`);
+        else {
+            // Update slider
+            // Valid speeds: 1 (fast) - 30 (slow)
+            // value: 0 - 255
+            let newSpeed = Math.round((1 - slider / 100.0) * 29 + 1);
+            // console.log(`Change speed to ${slider} -> ${newSpeed}`);
+            this.socket.emit(ClientConfig.IO.OUTGOING.PLAYER_SPEED_CHANGE, slider);
+            return;
+        }
+        // console.log(`capsenseDirectionNotification: ${direction.x}, ${direction.y} + ${event.target.value.getUint8(0)} ${event.target.value.getUint8(1)} ${event.target.value.getUint8(2)} => ${keyCode}`);
         if (keyCode)
             this.socket.emit(ClientConfig.IO.OUTGOING.KEY_DOWN, keyCode);
     }
@@ -379,11 +329,11 @@ export class BleObserver {
 
     createOrReconnectPlayer(device) {
         if (device.id in this.blePlayers) {
-            console.log(`Reconnect ${device.id}`);
+            // console.log(`Reconnect ${device.id}`);
             this.blePlayers[device.id].reconnect();
         }
         else {
-            console.log(`Create ${device.id}`);
+            // console.log(`Create ${device.id}`);
             this.blePlayers[device.id] = new BlePlayer(device, this.gameController);
         }
     }

@@ -2,7 +2,7 @@
 
 const ServerConfig = {
     MIN_FPS: 8,
-    STARTING_FPS: 60,
+    STARTING_FPS: 120,
     MAX_FPS: 120,
     PLAYER_STARTING_LENGTH: 10,
     SPAWN_TURN_LEEWAY: 10,
@@ -55,6 +55,7 @@ const ServerConfig = {
             IMAGE_UPLOAD: 'image upload',
             NEW_PLAYER: 'new player',
             NAME_CHANGE: 'player changed name',
+            SPEED_CHANGE: 'player changed speed',
             KEY_DOWN: 'key down',
             CANVAS_CLICKED: 'canvas clicked',
             DISCONNECT: 'disconnect',

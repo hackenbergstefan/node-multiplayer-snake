@@ -40,6 +40,7 @@ export default {
             IMAGE_UPLOAD: 'image upload',
             NEW_PLAYER: 'new player',
             NAME_CHANGE: 'player changed name',
+            PLAYER_SPEED_CHANGE: 'player changed speed',
             KEY_DOWN: 'key down',
             CANVAS_CLICKED: 'canvas clicked',
         },

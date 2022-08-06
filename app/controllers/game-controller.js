@@ -53,6 +53,8 @@ class GameController {
                 self.playerService.changePlayerName.bind(self.playerService, socket));
             socket.on(ServerConfig.IO.INCOMING.COLOR_CHANGE,
                 self.playerService.changeColor.bind(self.playerService, socket));
+            socket.on(ServerConfig.IO.INCOMING.SPEED_CHANGE,
+                self.playerService.changeSpeed.bind(self.playerService, socket));
             socket.on(ServerConfig.IO.INCOMING.JOIN_GAME,
                 self.playerService.playerJoinGame.bind(self.playerService, socket.id));
             socket.on(ServerConfig.IO.INCOMING.SPECTATE_GAME,

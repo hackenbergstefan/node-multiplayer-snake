@@ -14,7 +14,7 @@ const ValidationService = require('../services/validation-service');
 class PlayerService {
 
     constructor(playerContainer, playerStatBoard, boardOccupancyService, imageService,
-            nameService, notificationService, runGameCycle) {
+        nameService, notificationService, runGameCycle) {
         this.playerContainer = playerContainer;
         this.playerStatBoard = playerStatBoard;
         this.boardOccupancyService = boardOccupancyService;
@@ -66,6 +66,11 @@ class PlayerService {
         this.playerContainer.addPlayer(player);
         this.playerStatBoard.addPlayer(player.id, player.name, player.color);
         return player;
+    }
+
+    changeSpeed(socket, newSpeed) {
+        const player = this.playerContainer.getPlayer(socket.id);
+        player.speed = newSpeed;
     }
 
     changeColor(socket) {
@@ -169,7 +174,7 @@ class PlayerService {
             this.boardOccupancyService.removePlayerOccupancy(player.id, player.getSegments());
             CoordinateService.movePlayer(player);
             if (this.boardOccupancyService.isOutOfBounds(player.getHeadCoordinate()) ||
-                    this.boardOccupancyService.isWall(player.getHeadCoordinate())) {
+                this.boardOccupancyService.isWall(player.getHeadCoordinate())) {
                 player.clearAllSegments();
                 this.playerContainer.addPlayerIdToRespawn(player.id);
                 this.notificationService.broadcastRanIntoWall(player.name, player.color);
